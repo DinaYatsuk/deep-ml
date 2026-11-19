@@ -32,7 +32,11 @@ def attention(Q, K, V):
         exp_x = np.exp(x_shifted)
         return exp_x / np.sum(exp_x, axis=axis, keepdims=True)
 
-    scores = np.matmul(Q, np.swapaxes(K, -2, -1)) / math.sqrt(dim)
+    inv_sqrt_dim = dim**-0.25  # 1 / (dim ** (1/4))
+    Q_scaled = Q * inv_sqrt_dim
+    K_scaled = K * inv_sqrt_dim
+
+    scores = np.matmul(Q_scaled, np.swapaxes(K_scaled, -2, -1))
     weight = softmax(scores, axis=-1)
     result = np.matmul(weight, V)
    
